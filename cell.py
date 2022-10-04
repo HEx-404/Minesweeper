@@ -14,8 +14,8 @@ class Cell:
   def create_btn(self, location):
     btn = Button(
       location,
-      width=3,
-      height=3
+      width=8,
+      height=4
     )
     btn.bind('<Button-1>', self.left_click)
     btn.bind('<Button-3>', self.right_click)
