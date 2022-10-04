@@ -23,20 +23,19 @@ class Cell:
 
   def left_click(self,event):
     if self.is_mine:
-     self.cell_btn_obj.configure(bg='red')
+      self.reveal_mine()
     else:
-      self.cell_btn_obj.configure(text=f'{self.surrounded_mines}')
-      print(self.surrounded_mines)
-    
+      self.reveal_cell()
+      
   def right_click(self,event):
-    print("DyHoEr")
     print(self.y)
 
   def reveal_mine(self):
-    pass
+    self.cell_btn_obj.configure(bg='red')
 
-  def reveal_cell():
-    pass
+  def reveal_cell(self):
+   self.cell_btn_obj.configure(text=f'{self.surrounded_mines}')
+   print(self.surrounded_mines)
 
   def get_cell(self,x,y):
     for cell in Cell.all:
@@ -45,7 +44,7 @@ class Cell:
         
   @property
   def surrounded_cells(self):
-   cells = [
+    surr_cells = [
      self.get_cell(self.x-1,self.y-1),
      self.get_cell(self.x,self.y-1),
      self.get_cell(self.x+1,self.y-1),
@@ -55,16 +54,15 @@ class Cell:
      self.get_cell(self.x,self.y+1),
      self.get_cell(self.x+1,self.y+1)
    ]
-    
+    surr_cells = [cell for cell in surr_cells if cell is not None]
+    return surr_cells
 
   @property
   def surrounded_mines(self):
     mines_nearby = 0
-    for cell in Cell.all:
-      if cell.x in [self.x-1,self.x,self.x+1] and cell.y in [self.y-1,self.y,self.y+1]:
-        print(cell)
-        if cell.is_mine:
-          mines_nearby += 1
+    for cell in self.surrounded_cells:
+      if cell.is_mine:
+        mines_nearby += 1
     return mines_nearby
   
   @staticmethod
