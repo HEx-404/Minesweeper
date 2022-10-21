@@ -5,6 +5,8 @@ class Cell:
   all=[]
   def __init__(self,x,y,is_mine=False):
     self.is_mine = is_mine
+    self.is_opened = False
+    self.is_marked = False
     self.cell_btn_obj = None
     self.x = x
     self.y = y
@@ -14,8 +16,8 @@ class Cell:
   def create_btn(self, location):
     btn = Button(
       location,
-      width=3,
-      height=3
+      width=8,
+      height=4
     )
     btn.bind('<Button-1>', self.left_click)
     btn.bind('<Button-3>', self.right_click)
@@ -25,17 +27,27 @@ class Cell:
     if self.is_mine:
       self.reveal_mine()
     else:
+      if self.surrounded_mines == 0:
+        for cell_obj in self.surrounded_cells:
+          cell_obj.reveal_cell()
       self.reveal_cell()
       
   def right_click(self,event):
-    print(self.y)
+    if not self.is_marked:
+      self.cell_btn_obj.configure(bg='orange')
+      self.is_marked = True
+    else:
+      self.cell_btn_obj.configure(bg='SystemButtonFace')
+      self.is_marked = False
 
   def reveal_mine(self):
     self.cell_btn_obj.configure(bg='red')
 
   def reveal_cell(self):
-   self.cell_btn_obj.configure(text=f'{self.surrounded_mines}')
-   print(self.surrounded_mines)
+    if not self.is_opened:
+      self.cell_btn_obj.configure(text=f'{self.surrounded_mines}')
+      print(self.surrounded_mines)
+      self.is_opened = True
 
   def get_cell(self,x,y):
     for cell in Cell.all:

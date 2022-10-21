@@ -1,4 +1,6 @@
 # Minesweeper-Python
+[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
+
    Minesweeper game written in Python using Tkinter GUI library.
 
 # Usage
