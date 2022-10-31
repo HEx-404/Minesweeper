@@ -2,12 +2,11 @@ from tkinter import *
 from tkinter import messagebox
 import random, sys
 
-width=540
-height=594
+width=360
+height=396
 grid_size=6
 mines_count=10
 cell_count=grid_size**2
-seconds=0
 
 def height_prct(percentage):
   return (height/100)*percentage
@@ -17,6 +16,7 @@ def width_prct(percentage):
 class Cell:
   cells_left=cell_count
   all=[]
+  
   def __init__(self,x,y,is_mine=False):
     self.is_mine = is_mine
     self.is_opened = False
@@ -45,7 +45,13 @@ class Cell:
         for cell_obj in self.surrounded_cells:
           cell_obj.reveal_cell()
       self.reveal_cell()
+      if Cell.cells_left == mines_count:
+        messagebox.showinfo("Game Over","Congratulations! You won the game.")
+        sys.exit()
       
+      self.cell_btn_obj.unbind('<Button-1>')
+      self.cell_btn_obj.unbind('<Button-3>') 
+  
   def right_click(self,event):
     if not self.is_marked:
       self.cell_btn_obj.configure(bg='orange')
@@ -53,9 +59,9 @@ class Cell:
     else:
       self.cell_btn_obj.configure(bg='SystemButtonFace')
       self.is_marked = False
-
+      
   def reveal_mine(self):
-    self.cell_btn_obj.configure(bg='red')
+    self.cell_btn_obj.configure(bg = 'red')
     self.game_over()
     sys.exit()
 
@@ -65,7 +71,6 @@ class Cell:
   def reveal_cell(self):
     if not self.is_opened:
       self.cell_btn_obj.configure(text=f'{self.surrounded_mines}')
-      print(self.surrounded_mines)
       self.is_opened = True
       Cell.cells_left -=1
 
@@ -99,21 +104,14 @@ class Cell:
   
   @staticmethod
   def create_mines():
-    mines=random.sample(Cell.all,6)
-    print(mines)
+    mines=random.sample(Cell.all,10)
     for mine in mines:
       mine.is_mine = True
       
-  
   def __repr__(self):
     return f'({self.x},{self.y})'
-
-def update_timer():
-  global seconds
-  seconds += 1
-
-
-def main():
+  
+if __name__ == '__main__':
   window = Tk()
   window.geometry(f'{width}x{height}')
   window.title("Minesweeper")
@@ -127,9 +125,14 @@ def main():
   
   top_frame.place(x=0, y=0)
 
-  timer = Label(top_frame,text="000s", font=('Arial',32),bg='#4a752d',fg='orange')
-  timer.place(x=0,y=0)
-
+  title_label = Label(top_frame,
+                      text="MINESWEEPER",
+                      bg='#4a752d',
+                      fg='white',
+                      font=('Arial',28))
+  
+  title_label.place(x=32,y=0)
+                      
   centre_frame = Frame(window,
                        bg="black",
                        width=width_prct(75),
@@ -144,7 +147,5 @@ def main():
           c.cell_btn_obj.grid(column=x, row=y)
   
   Cell.create_mines()
-  window.mainloop()
 
-if __name__ == '__main__':
- main()
+  window.mainloop() 
