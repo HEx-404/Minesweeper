@@ -4,8 +4,8 @@ import random, sys
 
 width=360
 height=396
-grid_size=6
-mines_count=10
+grid_size=8
+mines_count=8
 cell_count=grid_size**2
 
 def height_prct(percentage):
@@ -30,8 +30,8 @@ class Cell:
   def create_btn(self, location):
     btn = Button(
       location,
-      width=8,
-      height=4
+      width=4,
+      height=2
     )
     btn.bind('<Button-1>', self.left_click)
     btn.bind('<Button-3>', self.right_click)
@@ -41,9 +41,6 @@ class Cell:
     if self.is_mine:
       self.reveal_mine()
     else:
-      if self.surrounded_mines == 0:
-        for cell_obj in self.surrounded_cells:
-          cell_obj.reveal_cell()
       self.reveal_cell()
       if Cell.cells_left == mines_count:
         messagebox.showinfo("Game Over","Congratulations! You won the game.")
@@ -62,17 +59,17 @@ class Cell:
       
   def reveal_mine(self):
     self.cell_btn_obj.configure(bg = 'red')
-    self.game_over()
-    sys.exit()
-
-  def game_over(self):
     messagebox.showinfo("Game Over","You Clicked on a Mine!")
+    sys.exit()
 
   def reveal_cell(self):
     if not self.is_opened:
       self.cell_btn_obj.configure(text=f'{self.surrounded_mines}')
       self.is_opened = True
       Cell.cells_left -=1
+      if self.surrounded_mines == 0:
+        for cell_obj in self.surrounded_cells:
+          cell_obj.reveal_cell()
 
   def get_cell(self,x,y):
     for cell in Cell.all:
@@ -104,7 +101,7 @@ class Cell:
   
   @staticmethod
   def create_mines():
-    mines=random.sample(Cell.all,10)
+    mines=random.sample(Cell.all,mines_count)
     for mine in mines:
       mine.is_mine = True
       
@@ -138,7 +135,7 @@ if __name__ == '__main__':
                        width=width_prct(75),
                        height=height_prct(75))
   
-  centre_frame.place(x=width_prct(12.5), y=height_prct(12.5+5))
+  centre_frame.place(x=width_prct(8), y=height_prct(12+1.5))
   
   for x in range(grid_size):
       for y in range(grid_size):
