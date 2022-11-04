@@ -50,9 +50,6 @@ class Cell:
         gameRunning = False
         messagebox.showinfo("Game Over","Congratulations! You won the game.")
         sys.exit()
-      
-      self.cell_btn_obj.unbind('<Button-1>')
-      self.cell_btn_obj.unbind('<Button-3>') 
   
   def right_click(self,event):
     if not self.is_marked:
@@ -79,6 +76,10 @@ class Cell:
                                   bg='lightgrey')
       self.is_opened = True
       Cell.cells_left -=1
+
+      self.cell_btn_obj.unbind('<Button-1>')
+      self.cell_btn_obj.unbind('<Button-3>')
+      
       if self.surrounded_mines == 0:
         for cell_obj in self.surrounded_cells:
           cell_obj.reveal_cell()
@@ -140,21 +141,21 @@ if __name__ == '__main__':
                     bg='#4a752d',
                     width=width,
                     height=height_prct(10))
-  top_frame.place(x=0, y=0)
+  top_frame.place(relx=0.5,anchor=N)
 
   title_label = Label(top_frame,
                       text="MINESWEEPER",
                       bg='#4a752d',
                       fg='white',
                       font=('Arial',28))
-  title_label.place(x=32,y=0)
+  title_label.place(relx=0.5,rely=0.5,anchor=CENTER)
 
   info_frame = Frame(
     window,
     bg='darkgreen',
     width=width,
     height=height_prct(8))
-  info_frame.place(x=0,y=height_prct(10))
+  info_frame.place(relx=0.5,rely=0.1,anchor=N)
 
   timer_label = Label(info_frame, font=('verdana', 12), 
   fg='white',text='00:00:00', width=10, bg='darkgreen')
@@ -168,7 +169,7 @@ if __name__ == '__main__':
                        bg="black",
                        width=width_prct(75),
                        height=height_prct(75))
-  centre_frame.place(x=width_prct(8), y=height_prct(18+5))
+  centre_frame.place(relx=0.5,rely=0.59,anchor=CENTER)
   
   for x in range(grid_size):
       for y in range(grid_size):
@@ -179,7 +180,6 @@ if __name__ == '__main__':
   Cell.create_mines()
 
   gameRunning = True
-
   start_time = datetime.now()
   timer_label['text'] = '00:00:00'
   window.after(1000,update_timer)
