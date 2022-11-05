@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from datetime import datetime
+import pandas as pd
 import random,sys,os,csv
 
 width=360
@@ -59,6 +60,7 @@ class Cell:
         with open("leaderboard.csv",'a') as file:
           cw = csv.writer(file)
           cw.writerow((name,time))
+          clear_lb('leaderboard.csv',6)
         with open('leaderboard.csv','r',newline='') as file:
           cr=csv.reader(file)
           for i in cr:
@@ -143,6 +145,14 @@ def update_timer():
       time = f"00:{int(minutes):02}:{round(seconds):02}"
       timer_label['text'] = time
       window.after(1000, update_timer)
+
+def clear_lb(file,limit):
+  with open(file) as f:
+    cr = csv.reader(f)
+    L=list(cr)
+  if len(L)>limit:
+    pr= pd.read_csv(file)
+    pr.drop(pr.index[1])
 
 if __name__ == '__main__':
   window = Tk()
