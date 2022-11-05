@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from datetime import datetime
-import random, sys
+import random,sys,os,csv
 
 width=360
 height=450
@@ -9,6 +9,12 @@ grid_size=8
 mines_count=8
 cell_count=grid_size**2
 gameRunning = False
+time=''
+
+if not os.path.isfile('leaderboard.csv'):
+  with open ("leaderboard.csv",'w') as file:
+    cw = csv.writer(file)
+    cw.writerow(("Name","Highscore"))
 
 def height_prct(percentage):
   return (height/100)*percentage
@@ -33,7 +39,7 @@ class Cell:
   def create_btn(self, location):
     btn = Button(
       location,
-      width=4,
+      width=2,
       height=2
     )
     btn.bind('<Button-1>', self.left_click)
@@ -41,7 +47,7 @@ class Cell:
     self.cell_btn_obj = btn
 
   def left_click(self,event):
-    global gameRunning
+    global gameRunning,time
     if self.is_mine:
       self.reveal_mine()
     else:
@@ -49,6 +55,14 @@ class Cell:
       if Cell.cells_left == mines_count:
         gameRunning = False
         messagebox.showinfo("Game Over","Congratulations! You won the game.")
+        name=input("Enter your name: ")
+        with open("leaderboard.csv",'a') as file:
+          cw = csv.writer(file)
+          cw.writerow((name,time))
+        with open('leaderboard.csv','r',newline='') as file:
+          cr=csv.reader(file)
+          for i in cr:
+            print(f'{i[0]}\t{i[1]}')
         sys.exit()
   
   def right_click(self,event):
@@ -122,12 +136,12 @@ class Cell:
     return f'({self.x},{self.y})'
 
 def update_timer():
-  global gameRunning
+  global gameRunning,time
   if gameRunning:
       now =  datetime.now()
       minutes, seconds = divmod((now - start_time).total_seconds(),60)
-      string = f"00:{int(minutes):02}:{round(seconds):02}"
-      timer_label['text'] = string
+      time = f"00:{int(minutes):02}:{round(seconds):02}"
+      timer_label['text'] = time
       window.after(1000, update_timer)
 
 if __name__ == '__main__':

@@ -186,4 +186,7 @@ replit.nix
 .history
 .ionide
 
+#user-defined
+leaderboard.csv
+
 # End of https://www.toptal.com/developers/gitignore/api/replit,python,visualstudiocode
