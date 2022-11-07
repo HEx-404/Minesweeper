@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
 from datetime import datetime
-import pandas as pd
 import random,sys,os,csv
 
 width=360
@@ -40,7 +39,7 @@ class Cell:
   def create_btn(self, location):
     btn = Button(
       location,
-      width=2,
+      width=4,
       height=2
     )
     btn.bind('<Button-1>', self.left_click)
@@ -57,11 +56,11 @@ class Cell:
         gameRunning = False
         messagebox.showinfo("Game Over","Congratulations! You won the game.")
         name=input("Enter your name: ")
-        with open("leaderboard.csv",'a') as file:
+        with open("leaderboard.csv",'a',newline='') as file:
           cw = csv.writer(file)
           cw.writerow((name,time))
-          clear_lb('leaderboard.csv',6)
-        with open('leaderboard.csv','r',newline='') as file:
+          clear_lb('leaderboard.csv',5)
+        with open('leaderboard.csv','r') as file:
           cr=csv.reader(file)
           for i in cr:
             print(f'{i[0]}\t{i[1]}')
@@ -147,12 +146,14 @@ def update_timer():
       window.after(1000, update_timer)
 
 def clear_lb(file,limit):
-  with open(file) as f:
+  with open(file,newline='') as f:
     cr = csv.reader(f)
-    L=list(cr)
-  if len(L)>limit:
-    pr= pd.read_csv(file)
-    pr.drop(pr.index[1])
+    res = list(cr)
+  if len(res)>limit+1:
+    res.pop[1]
+    with open(file,'w') as f:
+      cw = csv.writer(f)
+      cw.writerows(res)
 
 if __name__ == '__main__':
   window = Tk()
