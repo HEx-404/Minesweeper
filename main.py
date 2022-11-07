@@ -60,10 +60,6 @@ class Cell:
           cw = csv.writer(file)
           cw.writerow((name,time))
         clear_lb('leaderboard.csv',5)
-        with open('leaderboard.csv','r') as file:
-          cr=csv.reader(file)
-          for i in cr:
-            print(f'{i[0]}\t{i[1]}')
         sys.exit()
   
   def right_click(self,event):
@@ -157,6 +153,12 @@ def clear_lb(file,limit):
       cw = csv.writer(f)
       cw.writerows(res)
 
+def show_lb():
+  with open('leaderboard.csv','r') as file:
+          cr=csv.reader(file)
+          for i in cr:
+            print(f'{i[0]}\t{i[1]}')
+
 if __name__ == '__main__':
   window = Tk()
   window.geometry(f'{width}x{height}')
@@ -186,12 +188,19 @@ if __name__ == '__main__':
 
   timer_label = Label(info_frame, font=('verdana', 12), 
   fg='white',text='00:00:00', width=10, bg='darkgreen')
-  timer_label.place(relx=0.6,rely=0.5,anchor=CENTER)
+  timer_label.place(relx=0.5,rely=0.5,anchor=CENTER)
 
   mines_left_label = Label(info_frame,font=('verdana', 12), fg='white',
   bg='darkgreen',text=Cell.mines_left)
   mines_left_label.place(relx=0.3,rely=0.5,anchor=CENTER)
 
+  Lb = Button(
+    info_frame,
+    text='Leaderboard',
+    command=show_lb,)
+  Lb.place(relx=0.8,rely=0.5,anchor=CENTER)
+
+  
   centre_frame = Frame(window,
                        bg="black",
                        width=width_prct(75),
