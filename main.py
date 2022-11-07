@@ -12,7 +12,7 @@ gameRunning = False
 time=''
 
 if not os.path.isfile('leaderboard.csv'):
-  with open ("leaderboard.csv",'w') as file:
+  with open ("leaderboard.csv",'w',newline='') as file:
     cw = csv.writer(file)
     cw.writerow(("Name","Highscore"))
 
@@ -59,7 +59,7 @@ class Cell:
         with open("leaderboard.csv",'a',newline='') as file:
           cw = csv.writer(file)
           cw.writerow((name,time))
-          clear_lb('leaderboard.csv',5)
+        clear_lb('leaderboard.csv',6)
         with open('leaderboard.csv','r') as file:
           cr=csv.reader(file)
           for i in cr:
@@ -150,8 +150,8 @@ def clear_lb(file,limit):
     cr = csv.reader(f)
     res = list(cr)
   if len(res)>limit+1:
-    res.pop[1]
-    with open(file,'w') as f:
+    res.pop(1)
+    with open(file,'w',newline='') as f:
       cw = csv.writer(f)
       cw.writerows(res)
 
