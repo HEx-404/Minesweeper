@@ -59,7 +59,7 @@ class Cell:
         with open("leaderboard.csv",'a',newline='') as file:
           cw = csv.writer(file)
           cw.writerow((name,time))
-        clear_lb('leaderboard.csv',6)
+        clear_lb('leaderboard.csv',5)
         with open('leaderboard.csv','r') as file:
           cr=csv.reader(file)
           for i in cr:
@@ -149,8 +149,10 @@ def clear_lb(file,limit):
   with open(file,newline='') as f:
     cr = csv.reader(f)
     res = list(cr)
+    print(res)
   if len(res)>limit+1:
     res.pop(1)
+    print(res)
     with open(file,'w',newline='') as f:
       cw = csv.writer(f)
       cw.writerows(res)
