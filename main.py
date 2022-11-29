@@ -1,7 +1,6 @@
-from tkinter import *
-from tkinter import messagebox
-from datetime import datetime
-import random,sys,os,csv
+import tkinter as tk
+from tkinter import messagebox, simpledialog, ttk
+import random, sys, os, csv
 
 width=360
 height=450
@@ -9,12 +8,12 @@ grid_size=8
 mines_count=8
 cell_count=grid_size**2
 gameRunning = False
-time=''
+time=0
+app_path = '.'
 
-if not os.path.isfile('leaderboard.csv'):
-  with open ("leaderboard.csv",'w',newline='') as file:
-    cw = csv.writer(file)
-    cw.writerow(("Name","Highscore"))
+if not os.path.isfile(f'{app_path}/leaderboard.csv'):
+  with open (f"{app_path}/leaderboard.csv",'w') as file:
+    pass
 
 def height_prct(percentage):
   return (height/100)*percentage
@@ -37,7 +36,7 @@ class Cell:
     Cell.all.append(self)
     
   def create_btn(self, location):
-    btn = Button(
+    btn = tk.Button(
       location,
       width=4,
       height=2
@@ -55,11 +54,19 @@ class Cell:
       if Cell.cells_left == mines_count:
         gameRunning = False
         messagebox.showinfo("Game Over","Congratulations! You won the game.")
-        name=input("Enter your name: ")
-        with open("leaderboard.csv",'a',newline='') as file:
-          cw = csv.writer(file)
-          cw.writerow((name,time))
-        clear_lb('leaderboard.csv',5)
+        
+        while True:
+          pname = simpledialog.askstring(title="Minesweeper",prompt="What's your Name?:")
+          if pname != '':
+            break
+          else:
+            messagebox.showerror("Invalid","Please enter name")
+
+        if pname != None:
+          with open(f"{app_path}/leaderboard.csv",'a') as file:
+            cw = csv.writer(file)
+            cw.writerow((pname,f"{time}s"))
+        clear_lb(f'{app_path}/leaderboard.csv',10)
         sys.exit()
   
   def right_click(self,event):
@@ -135,75 +142,91 @@ class Cell:
 def update_timer():
   global gameRunning,time
   if gameRunning:
-      now =  datetime.now()
-      minutes, seconds = divmod((now - start_time).total_seconds(),60)
-      time = f"00:{int(minutes):02}:{round(seconds):02}"
-      timer_label['text'] = time
-      window.after(1000, update_timer)
+    time+=1
+    timer_label['text']=f"{time}s"
+    window.after(1000,update_timer)
+  else:
+    window.after(1000,update_timer)
+  
 
 def clear_lb(file,limit):
   with open(file,newline='') as f:
     cr = csv.reader(f)
     res = list(cr)
-  if len(res)>limit+1:
-    res.pop(1)
+  if len(res)>limit:
+    res.pop(0)
     with open(file,'w',newline='') as f:
       cw = csv.writer(f)
       cw.writerows(res)
 
 def show_lb():
-  with open('leaderboard.csv','r') as file:
+  global gameRunning
+  gameRunning = False
+  lbwin = tk.Toplevel(window)
+  lbwin.title("Leaderboard")
+  lbwin.geometry("360x220")
+  with open(f'{app_path}/leaderboard.csv') as file:
     cr=csv.reader(file)
-    print("LEADERBOARD")
-    for i in cr:
-      print(f'{i[0]}\t{i[1]}')
+    lbdata = list(cr)
+  table = ttk.Treeview(lbwin, column=("c1", "c2"), show='headings')
+  table.column("#1", anchor=tk.CENTER)
+  table.heading("#1", text="Name")
+  table.column("#2", anchor=tk.CENTER)
+  table.heading("#2", text="Highscore")
+  table.pack()
+  for row in lbdata:
+    table.insert("", tk.END, values=row)
+
+  window.wait_window(lbwin)
+  gameRunning = True
+
 
 if __name__ == '__main__':
-  window = Tk()
+  window = tk.Tk()
   window.geometry(f'{width}x{height}')
   window.title("Minesweeper")
   window.configure(bg='#568a35')
   window.resizable(False, False)
   
-  top_frame = Frame(window,
+  top_frame = tk.Frame(window,
                     bg='#4a752d',
                     width=width,
                     height=height_prct(10))
-  top_frame.place(relx=0.5,anchor=N)
+  top_frame.place(relx=0.5,anchor='n')
 
-  title_label = Label(top_frame,
+  title_label = tk.Label(top_frame,
                       text="MINESWEEPER",
                       bg='#4a752d',
                       fg='white',
                       font=('Arial',28))
-  title_label.place(relx=0.5,rely=0.5,anchor=CENTER)
+  title_label.place(relx=0.5,rely=0.5,anchor='center')
 
-  info_frame = Frame(
+  info_frame = tk.Frame(
     window,
     bg='darkgreen',
     width=width,
     height=height_prct(8))
-  info_frame.place(relx=0.5,rely=0.1,anchor=N)
+  info_frame.place(relx=0.5,rely=0.1,anchor='n')
 
-  timer_label = Label(info_frame, font=('verdana', 12), 
+  timer_label = tk.Label(info_frame, font=('verdana', 12), 
   fg='white',text='00:00:00', width=10, bg='darkgreen')
-  timer_label.place(relx=0.5,rely=0.5,anchor=CENTER)
+  timer_label.place(relx=0.5,rely=0.5,anchor='center')
 
-  mines_left_label = Label(info_frame,font=('verdana', 12), fg='white',
+  mines_left_label = tk.Label(info_frame,font=('verdana', 12), fg='white',
   bg='darkgreen',text=Cell.mines_left)
-  mines_left_label.place(relx=0.3,rely=0.5,anchor=CENTER)
+  mines_left_label.place(relx=0.3,rely=0.5,anchor='center')
 
-  Lb = Button(
+  Lb = tk.Button(
     info_frame,
     text='Leaderboard',
     command=show_lb,)
-  Lb.place(relx=0.8,rely=0.5,anchor=CENTER)
+  Lb.place(relx=0.8,rely=0.5,anchor='center')
 
-  centre_frame = Frame(window,
+  centre_frame = tk.Frame(window,
                        bg="black",
                        width=width_prct(75),
                        height=height_prct(75))
-  centre_frame.place(relx=0.5,rely=0.59,anchor=CENTER)
+  centre_frame.place(relx=0.5,rely=0.59,anchor='center')
   
   for x in range(grid_size):
       for y in range(grid_size):
@@ -214,8 +237,7 @@ if __name__ == '__main__':
   Cell.create_mines()
 
   gameRunning = True
-  start_time = datetime.now()
-  timer_label['text'] = '00:00:00'
+  timer_label['text'] = "0s"
   window.after(1000,update_timer)
 	
   window.mainloop()
