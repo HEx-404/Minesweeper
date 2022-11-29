@@ -145,19 +145,18 @@ def clear_lb(file,limit):
   with open(file,newline='') as f:
     cr = csv.reader(f)
     res = list(cr)
-    print(res)
   if len(res)>limit+1:
     res.pop(1)
-    print(res)
     with open(file,'w',newline='') as f:
       cw = csv.writer(f)
       cw.writerows(res)
 
 def show_lb():
   with open('leaderboard.csv','r') as file:
-          cr=csv.reader(file)
-          for i in cr:
-            print(f'{i[0]}\t{i[1]}')
+    cr=csv.reader(file)
+    print("LEADERBOARD")
+    for i in cr:
+      print(f'{i[0]}\t{i[1]}')
 
 if __name__ == '__main__':
   window = Tk()
@@ -200,7 +199,6 @@ if __name__ == '__main__':
     command=show_lb,)
   Lb.place(relx=0.8,rely=0.5,anchor=CENTER)
 
-  
   centre_frame = Frame(window,
                        bg="black",
                        width=width_prct(75),
