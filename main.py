@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox, simpledialog, ttk
+from tkinter import messagebox, simpledialog, PhotoImage, ttk
 import random, sys, os, csv
 
 width=360
@@ -10,6 +10,7 @@ cell_count=grid_size**2
 gameRunning = False
 time=0
 app_path = '.'
+
 
 if not os.path.isfile(f'{app_path}/leaderboard.csv'):
   with open (f"{app_path}/leaderboard.csv",'w') as file:
@@ -38,7 +39,7 @@ class Cell:
   def create_btn(self, location):
     btn = tk.Button(
       location,
-      width=4,
+      width=2,
       height=2
     )
     btn.bind('<Button-1>', self.left_click)
@@ -162,6 +163,7 @@ def clear_lb(file,limit):
 def show_lb():
   global gameRunning
   gameRunning = False
+  window.withdraw()
   lbwin = tk.Toplevel(window)
   lbwin.title("Leaderboard")
   lbwin.geometry("360x220")
@@ -178,6 +180,7 @@ def show_lb():
     table.insert("", tk.END, values=row)
 
   window.wait_window(lbwin)
+  window.deiconify()
   gameRunning = True
 
 
@@ -185,6 +188,8 @@ if __name__ == '__main__':
   window = tk.Tk()
   window.geometry(f'{width}x{height}')
   window.title("Minesweeper")
+  app_icon = PhotoImage(file=f"{app_path}/appicon.png")
+  window.iconphoto(True, app_icon)
   window.configure(bg='#568a35')
   window.resizable(False, False)
   
